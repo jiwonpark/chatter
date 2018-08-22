@@ -16,6 +16,25 @@ const clientId = 'bgtestnodejs-' + (Math.random() * 10000).toFixed();
 var client  = mqtt.connect(MQTT_ADDR,{clientId: clientId, protocolId: 'MQIsdp', protocolVersion: 3, connectTimeout:1000, debug:true});
 
 var readline = require('readline');
+var nick;
+var bangzang;
+
+function init() {
+    if (!process.argv[2]) {
+        console.log("Run with Your Nickname: node chatter.js {nickname}");
+        process.exit();
+        return;
+    }
+    nick = process.argv[2];
+
+    if (process.argv[3] == '방장') {
+        bangzang = require('./bangzang');
+        bangzang.setMqttClient(client, MQTT_TOPIC);;
+        console.log("You are bangzang!!");
+    }
+}
+
+init();
 
 client.on('connect', function () {
     console.log(`Connected to ${MQTT_ADDR} ${clientId}!`);
@@ -29,7 +48,12 @@ client.on('connect', function () {
     });
         
     rl.on('line', function(line){
-        client.publish(MQTT_TOPIC, line);
+        var message = [nick, line].join('>>');
+        if (bangzang) {
+            if (bangzang.checkSpecialOperation(message))
+                return;
+        }
+        client.publish(MQTT_TOPIC, message);
     });
     
     // client.publish(MQTT_TOPIC, 'Hello mqtt');
@@ -37,7 +61,9 @@ client.on('connect', function () {
 
 client.on('message', function (topic, message) {
     // message is Buffer
-    console.log(`'${message.toString()}' received for topic '${topic}'`);
+    if (bangzang)
+        bangzang.checkSpecialOperation(message.toString());
+    console.log(message.toString());
     // client.end();
 });
 
