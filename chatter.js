@@ -16,7 +16,7 @@ const clientId = 'bgtestnodejs-' + (Math.random() * 10000).toFixed();
 var client  = mqtt.connect(MQTT_ADDR,{clientId: clientId, protocolId: 'MQIsdp', protocolVersion: 3, connectTimeout:1000, debug:true});
 
 var readline = require('readline');
-var nick;
+var nickname;
 var bangzang;
 
 function init() {
@@ -25,11 +25,11 @@ function init() {
         process.exit();
         return;
     }
-    nick = process.argv[2];
+    nickname = process.argv[2];
 
     if (process.argv[3] == '방장') {
         bangzang = require('./bangzang');
-        bangzang.setMqttClient(client, MQTT_TOPIC);;
+        bangzang.setMqttClient(client, MQTT_TOPIC, nickname);;
         console.log("You are bangzang!!");
     }
 }
@@ -48,7 +48,7 @@ client.on('connect', function () {
     });
         
     rl.on('line', function(line){
-        var message = [nick, line].join('>>');
+        var message = [nickname, line].join('>>');
         if (bangzang) {
             if (bangzang.checkSpecialOperation(message))
                 return;
