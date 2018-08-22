@@ -29,16 +29,15 @@ static void _delivered(void *context, MQTTClient_deliveryToken dt)
 
 static int __msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *message)
 {
-	DBG("Message arrived");
-    DBG("     topic: %s", topicName);
-
     char msg_str[1000];
     strncpy(msg_str, message->payload, message->payloadlen);
     msg_str[message->payloadlen] = '\0';
-    DBG("   message: \"%s\"", msg_str);
+
+    DBG("Message arrived for topic: \"%s\": \"%s\"", topicName, msg_str);
 
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
+
     return 1;
 }
 
@@ -50,9 +49,9 @@ static void __connlost(void *context, char *cause)
 
 static bool service_app_create(void *user_data)
 {
-	DBG("service_app_create");
+    DBG("service_app_create");
 
-	MQTTClient client;
+    MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
     int rc;
 
@@ -70,8 +69,8 @@ static bool service_app_create(void *user_data)
         exit(EXIT_FAILURE);
     }
 
-    const char* topic = "/some/topic/name";
-    DBG("Subscribing to topic %s for client %s using QoS%d\n", topic, client_id, QOS);
+    const char* topic = "/seoul-iot/mqtt/test";
+    DBG("Subscribing to topic \"%s\"", topic);
     MQTTClient_subscribe(client, topic, QOS);
 
 //    MQTTClientDBGisconnect(client, 10000);

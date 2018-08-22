@@ -2,7 +2,7 @@
 
 var mqtt = require('mqtt');
 
-var MQTT_TOPIC          = "/some/topic/name";
+var MQTT_TOPIC          = "/seoul-iot/mqtt/test";
 // var MQTT_ADDR           = "mqtt://localhost";
 var MQTT_ADDR           = "mqtt://MQTTBroker2.us-west-1.elasticbeanstalk.com";
 var MQTT_PORT           = 1883;

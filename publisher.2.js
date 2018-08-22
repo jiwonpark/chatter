@@ -4,6 +4,7 @@ var mqtt = require('mqtt');
 
 var MQTT_TOPIC          = "/seoul-iot/mqtt/test";
 var MQTT_ADDR           = "mqtt://MQTTBroker2.us-west-1.elasticbeanstalk.com";
+var MQTT_PORT           = 1883;
 
 const clientId = 'test-client-' + (Math.random() * 10000).toFixed();
 
@@ -19,7 +20,8 @@ var readline = require('readline');
 
 client.on('connect', function () {
     console.log(`Connected to ${MQTT_ADDR} ${clientId}!`);
-    console.log(`Enter message to publish for topic "${MQTT_TOPIC}"...`);
+    console.log(`Subscribing to ${MQTT_TOPIC}`);
+    client.subscribe(MQTT_TOPIC);
 
     var rl = readline.createInterface({
         input: process.stdin,
