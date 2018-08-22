@@ -17,9 +17,7 @@ var client  = mqtt.connect(MQTT_ADDR,{clientId: clientId, protocolId: 'MQIsdp', 
 
 var readline = require('readline');
 var nick;
-var isBangzang = false;
-var bangzang = require('./bangzang');
-bangzang.setMqttClient(client, MQTT_TOPIC);
+var bangzang;
 
 function init() {
     if (!process.argv[2]) {
@@ -30,7 +28,8 @@ function init() {
     nick = process.argv[2];
 
     if (process.argv[3] == '방장') {
-        isBangzang = true;
+        bangzang = require('./bangzang');
+        bangzang.setMqttClient(client, MQTT_TOPIC);;
         console.log("You are bangzang!!");
     }
 }
@@ -50,7 +49,7 @@ client.on('connect', function () {
         
     rl.on('line', function(line){
         var message = [nick, line].join('>>');
-        if (isBangzang) {
+        if (bangzang) {
             if (bangzang.checkSpecialOperation(message))
                 return;
         }
@@ -62,7 +61,7 @@ client.on('connect', function () {
 
 client.on('message', function (topic, message) {
     // message is Buffer
-    if (isBangzang)
+    if (bangzang)
         bangzang.checkSpecialOperation(message.toString());
     console.log(message.toString());
     // client.end();
