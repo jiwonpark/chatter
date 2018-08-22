@@ -17,6 +17,7 @@ var client  = mqtt.connect(MQTT_ADDR,{clientId: clientId, protocolId: 'MQIsdp', 
 
 var readline = require('readline');
 var nick;
+
 function init() {
     if (!process.argv[2]) {
         console.log("Run with Your Nickname: node chatter.js {nickname}");
@@ -24,6 +25,11 @@ function init() {
         return;
     }
     nick = process.argv[2];
+
+    if (process.argv[3]) {
+        MQTT_TOPIC = process.argv[3];
+        console.log("WOW! New Topic: " + MQTT_TOPIC);
+    }
 }
 
 init();
